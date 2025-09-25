@@ -2,6 +2,12 @@
 
 Pipeline for extracting reliable cell counts from GFP fluorescence imagery. The goal is to separate cleanly delineated cells from noisy backgrounds, quantify the trustworthy images directly, and infer cell counts for the remainder by modeling the relationship between intensity and cell count.
 
+Clone via
+
+```bash
+git clone https://github.com/emkeeler/gfp_cell_counter.git
+```
+
 ## Files
 - `image_threshold.py`: applies histogram-based adaptive thresholding to every image so bright signal stands out from background
 - `cell_counter.py`: counts cells in high-quality images by locating blobs after thresholding and logs the results
