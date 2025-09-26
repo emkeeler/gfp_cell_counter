@@ -1,6 +1,6 @@
-# GFP Cell Counter Pipeline
+# Pipeline to count GFP+ infected cells 
 
-Pipeline for extracting reliable cell counts from GFP fluorescence imagery. The goal is to separate cleanly delineated cells from noisy backgrounds, quantify the trustworthy images directly, and infer cell counts for the remainder by modeling the relationship between intensity and cell count.
+Pipeline to count cells from GFP fluorescence images. The aim is to separate cells from background, quantify the clean images directly, and, if necessary, to infer cell counts for  unclean (i.e., overexposed) images using an intensity-to-count model fitted based on the clean images.
 
 Clone via
 
@@ -17,22 +17,22 @@ git clone https://github.com/emkeeler/gfp_cell_counter.git
 
 ## Pipeline
 1. **Threshold all images**
-   - Run `image_threshold.py` on a directory of GFP images. The script inspects green-channel histograms and zeroes out values below the strongest occupied bin. 
+   - Run `image_threshold.py` on a directory of  images. The script inspects green-channel histograms and zeroes out values below the strongest occupied bin. 
 
-2. **Select good images**
-   - Inspect the thresholded outputs to identify clean, well-isolated cells (no overlap, minimal background). These good images form the calibration set for downstream steps.
+2. **Select clean images**
+   - Manually inspect the thresholded outputs to select clean, well-isolated cells (no overlap, minimal background). 
 
-3. **Count cells in good images**
-   - Execute `cell_counter.py` on the good subset. It parallelizes blob detection, writes per-image comparisons under `comparisons/` for visual QA, and appends counts to `csv/results.csv`.
+3. **Count cells in clean images**
+   - Execute `cell_counter.py` on the clean image subset. The script parallelizes cells detection, writes per-image comparisons under `comparisons/` for visual QA, and appends counts to `csv/results.csv`.
 
 4. **Measure intensities**
-   - Use `intensity_analyzer.py` on both good and bad images. It reports green-channel intensity sums and basic metadata to CSV files such as `csv/intensity_processed.csv` and `csv/intensity_reprocess.csv`.
+   - Use `intensity_analyzer.py` on both clean and unclean images. The script reports green-channel intensity sums and basic metadata to CSV files such as `csv/intensity_processed.csv` and `csv/intensity_reprocess.csv`.
 
 5. **Fit intensity-to-count model**
-   - Open `working_intensity_fit.ipynb`. Load the counts from `csv/results.csv` and matching intensities from `csv/intensity_processed.csv`. Fit a linear regression that maps intensity to observed cell counts for the good images.
+   - Open `working_intensity_fit.ipynb`. Load the counts from `csv/results.csv` and corresponding intensities from `csv/intensity_processed.csv`. The script fits a linear regression that maps intensity to observed cell counts for the clean images.
 
-6. **Infer counts for bad images**
-   - Apply the fitted regression to intensities from the previously rejected images. The notebook combines measured and inferred counts into `csv/results_combined.csv`.
+6. **Infer counts for unclean images**
+   - Optionally, apply the fitted regression to intensities from the  rejected images. The script combines measured and inferred counts into `csv/results_combined.csv`.
 
 ## Requirements
 All scripts target Python 3.9+ and rely on the scientific Python stack:
